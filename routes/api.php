@@ -48,6 +48,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('courses', CoursesController::class);
     Route::post('comments', [CommentsController::class, 'store']);
-    Route::put('comments/{comments}', [CommentsController::class, 'update']);
-    Route::delete('comments/{comment}', [CommentsController::class, 'destroy']);
+    // Route::put('comments/{comments}', [CommentsController::class, 'update']);
+    // Route::delete('comments/{comment}', [CommentsController::class, 'destroy']);
 });

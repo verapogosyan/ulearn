@@ -15,20 +15,20 @@ class Comment extends Model
     protected $fillable = [
         'content',
         'rating',
+        'parent_id',
         'commentable_type',
         'commentable_id',
-        'user_id',
-        'parent_id'
+        'user_id'
+    ];
+
+    protected $hidden = [
+        'commentable_type',
+        'commentable_id'
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function children(): HasMany
-    {
-        return $this->hasMany(Comment::class, 'parent_id');
     }
 
     public function parent(): BelongsTo

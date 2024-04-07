@@ -7,11 +7,13 @@ use App\Http\Requests\Course\CoursesListRequest;
 use App\Http\Requests\Course\CourseUpdateRequest;
 use App\Models\Course;
 use App\Models\User;
+use App\Traits\CommentsTrait;
 use Exception;
-use Illuminate\Http\Request;
 
 class CoursesController extends BaseController
 {
+
+    use CommentsTrait;
 
     public function __construct()
     {
@@ -40,9 +42,9 @@ class CoursesController extends BaseController
     public function store(CourseCreateRequest $request)
     {
         try {
-            $validated = $request->validated();
-            $course = Course::create($validated);
-            $authors = User::whereIn('id', $validated['author_ids'])->get();
+            $data = $request->validated();
+            $course = Course::create($data);
+            $authors = User::whereIn('id', $data['author_ids'])->get();
 
             foreach ($authors as $author) {
                 $author->courses()->save($course);
@@ -50,6 +52,7 @@ class CoursesController extends BaseController
 
             return $this->response(['message' => 'created', 'data' => $course], 201);
         } catch (Exception $e) {
+
             return $this->somethingWentWrongResponse();
         }
     }
@@ -60,6 +63,8 @@ class CoursesController extends BaseController
     public function show(string $id)
     {
         $course = Course::with('comments')->find($id);
+        $course->allComments = $this->formCommentsTree($course->comments);
+        $course->unsetRelation('comments');
 
         return $course ? $this->response(['data' => $course], 200) : $this->notFoundResponse();
     }
@@ -72,6 +77,7 @@ class CoursesController extends BaseController
         $course = Course::find($id);
 
         if (!$course) {
+
             return $this->notFoundResponse();
         }
 
@@ -88,6 +94,7 @@ class CoursesController extends BaseController
         $course = Course::find($id);
 
         if (!$course) {
+
             return $this->notFoundResponse();
         }
 

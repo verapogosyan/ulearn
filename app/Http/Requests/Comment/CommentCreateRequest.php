@@ -11,7 +11,7 @@ class CommentCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class CommentCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'content' => 'required|string',
+            'rating' => "sometimes|integer|min:0|max:5",
+            'commentable_type' => 'required|string|in:user,course',
+            'commentable_id'  => 'required|exists:' . $this->commentable_type . 's,id',
+            'parent_id' => 'sometimes|exists:comments,id'
         ];
     }
 }

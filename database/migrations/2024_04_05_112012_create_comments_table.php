@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('content');
             $table->smallInteger('rating')->nullable();
-            $table->foreignId('parent_id')->constrained('comments')->nullable()->onDelete('cascade');
+            $table->foreignId('parent_id')->nullable()->constrained('comments')->onDelete('cascade');
             $table->unsignedBigInteger('commentable_id');
             $table->string('commentable_type');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

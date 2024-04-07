@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Course;
 
+use App\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CourseUpdateRequest extends FormRequest
@@ -11,7 +12,13 @@ class CourseUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = auth()->user();
+
+        $count = Course::where('id', $this->route('course'))->whereHas('authors', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->count();
+
+        return (bool) $count;
     }
 
     /**
@@ -24,9 +31,7 @@ class CourseUpdateRequest extends FormRequest
         return [
             'title' => 'sometimes|string|max:255',
             'bio'  => 'sometimes|string|max:500',
-            'content' => 'sometimes|string',
-            'author_ids' => 'sometimes|array',
-            'author_ids.*' => 'sometimes|exists:users,id'
+            'content' => 'sometimes|string'
         ];
     }
 }
